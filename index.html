@@ -53,15 +53,55 @@
         }
         .currency-selector, .unit-selector {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            gap: 10px;
             margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f8f8f8;
+            border-radius: 5px;
         }
-        .currency-selector select, .unit-selector select {
-            width: 45%;
+        .converter-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .converter-inputs input {
+            width: 100%;
             padding: 5px;
             font-size: 16px;
             border-radius: 5px;
             border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        .currency-selector select, .unit-selector select {
+            width: 100%;
+            padding: 5px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        .conversion-result {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            padding: 10px;
+            background-color: white;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .convert-button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #f8a51d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .convert-button:hover {
+            background-color: #e59400;
         }
         .discount-calculator {
             margin-bottom: 10px;
@@ -92,9 +132,13 @@
             border-radius: 5px;
             border: 1px solid #ccc;
         }
+        .background-color {
+            background-color: #dfc7c75d;
+        }
     </style>
 </head>
 <body>
+    <h1 style="text-align: center;">Simple Calculator</h1>
     <div class="calculator">
         <div class="converter-toggles">
             <label>
@@ -118,62 +162,76 @@
             </div>
         </div>
         <div class="currency-selector" style="display: none;">
-            <select id="fromCurrency">
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-                <option value="GBP">GBP</option>
-                <option value="JPY">JPY</option>
-                <option value="AUD">AUD</option>
-            </select>
-            <select id="toCurrency">
-                <option value="EUR">EUR</option>
-                <option value="USD">USD</option>
-                <option value="GBP">GBP</option>
-                <option value="JPY">JPY</option>
-                <option value="AUD">AUD</option>
-            </select>
+            <div class="converter-inputs">
+                <input type="number" id="currencyAmount" placeholder="Amount" step="0.01">
+                <select id="fromCurrency">
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                    <option value="GBP">GBP</option>
+                    <option value="JPY">JPY</option>
+                    <option value="AUD">AUD</option>
+                </select>
+                <select id="toCurrency">
+                    <option value="EUR">EUR</option>
+                    <option value="USD">USD</option>
+                    <option value="GBP">GBP</option>
+                    <option value="JPY">JPY</option>
+                    <option value="AUD">AUD</option>
+                </select>
+            </div>
+            <div class="conversion-result">
+                <span id="currencyResult">0.00</span>
+            </div>
+            <button onclick="convertCurrencyValue()" class="convert-button">Convert Currency</button>
         </div>
         <div class="unit-selector" style="display: none;">
-            <select id="fromUnit">
-                <optgroup label="Length">
-                    <option value="m">Meters</option>
-                    <option value="km">Kilometers</option>
-                    <option value="cm">Centimeters</option>
-                    <option value="ft">Feet</option>
-                    <option value="in">Inches</option>
-                    <option value="mi">Miles</option>
-                </optgroup>
-                <optgroup label="Weight">
-                    <option value="kg">Kilograms</option>
-                    <option value="g">Grams</option>
-                    <option value="lb">Pounds</option>
-                    <option value="oz">Ounces</option>
-                </optgroup>
-                <optgroup label="Temperature">
-                    <option value="c">Celsius</option>
-                    <option value="f">Fahrenheit</option>
-                </optgroup>
-            </select>
-            <select id="toUnit">
-                <optgroup label="Length">
-                    <option value="ft">Feet</option>
-                    <option value="m">Meters</option>
-                    <option value="km">Kilometers</option>
-                    <option value="cm">Centimeters</option>
-                    <option value="in">Inches</option>
-                    <option value="mi">Miles</option>
-                </optgroup>
-                <optgroup label="Weight">
-                    <option value="lb">Pounds</option>
-                    <option value="kg">Kilograms</option>
-                    <option value="g">Grams</option>
-                    <option value="oz">Ounces</option>
-                </optgroup>
-                <optgroup label="Temperature">
-                    <option value="f">Fahrenheit</option>
-                    <option value="c">Celsius</option>
-                </optgroup>
-            </select>
+            <div class="converter-inputs">
+                <input type="number" id="unitAmount" placeholder="Amount" step="0.01">
+                <select id="fromUnit">
+                    <optgroup label="Length">
+                        <option value="m">Meters</option>
+                        <option value="km">Kilometers</option>
+                        <option value="cm">Centimeters</option>
+                        <option value="ft">Feet</option>
+                        <option value="in">Inches</option>
+                        <option value="mi">Miles</option>
+                    </optgroup>
+                    <optgroup label="Weight">
+                        <option value="kg">Kilograms</option>
+                        <option value="g">Grams</option>
+                        <option value="lb">Pounds</option>
+                        <option value="oz">Ounces</option>
+                    </optgroup>
+                    <optgroup label="Temperature">
+                        <option value="c">Celsius</option>
+                        <option value="f">Fahrenheit</option>
+                    </optgroup>
+                </select>
+                <select id="toUnit">
+                    <optgroup label="Length">
+                        <option value="ft">Feet</option>
+                        <option value="m">Meters</option>
+                        <option value="km">Kilometers</option>
+                        <option value="cm">Centimeters</option>
+                        <option value="in">Inches</option>
+                        <option value="mi">Miles</option>
+                    </optgroup>
+                    <optgroup label="Weight">
+                        <option value="lb">Pounds</option>
+                        <option value="kg">Kilograms</option>
+                        <option value="g">Grams</option>
+                        <option value="oz">Ounces</option>
+                    </optgroup>
+                    <optgroup label="Temperature">
+                        <option value="f">Fahrenheit</option>
+                        <option value="c">Celsius</option>
+                    </optgroup>
+                </select>
+            </div>
+            <div class="conversion-result">
+                <span id="unitResult">0.00</span>
+            </div>
+            <button onclick="convertUnitValue()" class="convert-button">Convert Unit</button>
         </div>
         <input type="text" id="display" readonly>
         <div class="buttons">
