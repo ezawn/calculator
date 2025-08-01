@@ -190,6 +190,45 @@ function deleteLast() {
     display.value = display.value.slice(0, -1);
 }
 
+async function convertCurrencyValue() {
+    const amount = document.getElementById('currencyAmount').value;
+    const from = document.getElementById('fromCurrency').value;
+    const to = document.getElementById('toCurrency').value;
+    const resultElement = document.getElementById('currencyResult');
+
+    if (!amount || isNaN(amount)) {
+        resultElement.textContent = 'Please enter a valid amount';
+        return;
+    }
+
+    try {
+        const result = await convertCurrency(amount, from, to);
+        resultElement.textContent = `${to} ${result.toFixed(2)}`;
+    } catch (error) {
+        resultElement.textContent = 'Currency Error';
+    }
+}
+
+function convertUnitValue() {
+    const amount = document.getElementById('unitAmount').value;
+    const from = document.getElementById('fromUnit').value;
+    const to = document.getElementById('toUnit').value;
+    const resultElement = document.getElementById('unitResult');
+
+    if (!amount || isNaN(amount)) {
+        resultElement.textContent = 'Please enter a valid amount';
+        return;
+    }
+
+    try {
+        const result = convertUnit(Number(amount), from, to);
+        // Use more decimal places for small values
+        resultElement.textContent = `${Math.abs(result) < 0.01 ? result.toFixed(4) : result.toFixed(2)} ${to.toUpperCase()}`;
+    } catch (error) {
+        resultElement.textContent = 'Unit Error';
+    }
+}
+
 async function calculate() {
     try {
         // Special case for 9+10
@@ -198,33 +237,9 @@ async function calculate() {
             return;
         }
 
-        // First evaluate the mathematical expression
+        // Evaluate the mathematical expression
         let result = new Function('return ' + display.value)();
-        
-        // Handle currency conversion
-        if (enableCurrency.checked && fromCurrency.value !== toCurrency.value) {
-            try {
-                result = await convertCurrency(result, fromCurrency.value, toCurrency.value);
-                display.value = result.toFixed(2);
-            } catch (error) {
-                display.value = 'Currency Error';
-                setTimeout(clearDisplay, 1500);
-            }
-        }
-        // Handle unit conversion
-        else if (enableUnits.checked && fromUnit.value !== toUnit.value) {
-            try {
-                result = convertUnit(result, fromUnit.value, toUnit.value);
-                // Use more decimal places for small values
-                display.value = Math.abs(result) < 0.01 ? result.toFixed(4) : result.toFixed(2);
-            } catch (error) {
-                display.value = 'Unit Error';
-                setTimeout(clearDisplay, 1500);
-            }
-        }
-        else {
-            display.value = result;
-        }
+        display.value = result;
     } catch (error) {
         display.value = 'Error';
         setTimeout(clearDisplay, 1000);
