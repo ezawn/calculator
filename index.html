@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Calculator</title>
+    <style>
+        .calculator {
+            width: 300px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        #display {
+            width: 100%;
+            height: 40px;
+            margin-bottom: 10px;
+            font-size: 20px;
+            text-align: right;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+        }
+        button {
+            padding: 10px;
+            font-size: 18px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #e0e0e0;
+        }
+        .operator {
+            background-color: #f8a51d;
+            color: white;
+        }
+        .operator:hover {
+            background-color: #e59400;
+        }
+        .converter-toggles {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .currency-selector, .unit-selector {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .currency-selector select, .unit-selector select {
+            width: 45%;
+            padding: 5px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .discount-calculator {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f8f8f8;
+            border-radius: 5px;
+        }
+        .discount-inputs {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .discount-inputs input {
+            width: 45%;
+            padding: 5px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .discount-results {
+            display: flex;
+            justify-content: space-between;
+            font-size: 16px;
+        }
+        .discount-results div {
+            background-color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="converter-toggles">
+            <label>
+                <input type="checkbox" id="enableCurrency"> Currency Conversion
+            </label>
+            <label>
+                <input type="checkbox" id="enableUnits"> Unit Conversion
+            </label>
+            <label>
+                <input type="checkbox" id="enableDiscount"> Discount
+            </label>
+        </div>
+        <div class="discount-calculator" style="display: none;">
+            <div class="discount-inputs">
+                <input type="number" id="originalPrice" placeholder="Original Price" step="0.01">
+                <input type="number" id="discountPercent" placeholder="Discount %" min="0" max="100">
+            </div>
+            <div class="discount-results">
+                <div>Savings: <span id="savingsAmount">$0.00</span></div>
+                <div>Final Price: <span id="finalPrice">$0.00</span></div>
+            </div>
+        </div>
+        <div class="currency-selector" style="display: none;">
+            <select id="fromCurrency">
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+                <option value="JPY">JPY</option>
+                <option value="AUD">AUD</option>
+            </select>
+            <select id="toCurrency">
+                <option value="EUR">EUR</option>
+                <option value="USD">USD</option>
+                <option value="GBP">GBP</option>
+                <option value="JPY">JPY</option>
+                <option value="AUD">AUD</option>
+            </select>
+        </div>
+        <div class="unit-selector" style="display: none;">
+            <select id="fromUnit">
+                <optgroup label="Length">
+                    <option value="m">Meters</option>
+                    <option value="km">Kilometers</option>
+                    <option value="cm">Centimeters</option>
+                    <option value="ft">Feet</option>
+                    <option value="in">Inches</option>
+                    <option value="mi">Miles</option>
+                </optgroup>
+                <optgroup label="Weight">
+                    <option value="kg">Kilograms</option>
+                    <option value="g">Grams</option>
+                    <option value="lb">Pounds</option>
+                    <option value="oz">Ounces</option>
+                </optgroup>
+                <optgroup label="Temperature">
+                    <option value="c">Celsius</option>
+                    <option value="f">Fahrenheit</option>
+                </optgroup>
+            </select>
+            <select id="toUnit">
+                <optgroup label="Length">
+                    <option value="ft">Feet</option>
+                    <option value="m">Meters</option>
+                    <option value="km">Kilometers</option>
+                    <option value="cm">Centimeters</option>
+                    <option value="in">Inches</option>
+                    <option value="mi">Miles</option>
+                </optgroup>
+                <optgroup label="Weight">
+                    <option value="lb">Pounds</option>
+                    <option value="kg">Kilograms</option>
+                    <option value="g">Grams</option>
+                    <option value="oz">Ounces</option>
+                </optgroup>
+                <optgroup label="Temperature">
+                    <option value="f">Fahrenheit</option>
+                    <option value="c">Celsius</option>
+                </optgroup>
+            </select>
+        </div>
+        <input type="text" id="display" readonly>
+        <div class="buttons">
+            <button onclick="clearDisplay()">C</button>
+            <button onclick="appendToDisplay('(')">(</button>
+            <button onclick="appendToDisplay(')')">)</button>
+            <button class="operator" onclick="appendToDisplay('/')">/</button>
+            
+            <button onclick="appendToDisplay('7')">7</button>
+            <button onclick="appendToDisplay('8')">8</button>
+            <button onclick="appendToDisplay('9')">9</button>
+            <button class="operator" onclick="appendToDisplay('*')">*</button>
+            
+            <button onclick="appendToDisplay('4')">4</button>
+            <button onclick="appendToDisplay('5')">5</button>
+            <button onclick="appendToDisplay('6')">6</button>
+            <button class="operator" onclick="appendToDisplay('-')">-</button>
+            
+            <button onclick="appendToDisplay('1')">1</button>
+            <button onclick="appendToDisplay('2')">2</button>
+            <button onclick="appendToDisplay('3')">3</button>
+            <button class="operator" onclick="appendToDisplay('+')">+</button>
+            
+            <button onclick="appendToDisplay('0')">0</button>
+            <button onclick="appendToDisplay('.')">.</button>
+            <button onclick="deleteLast()">⌫</button>
+            <button class="operator" onclick="calculate()">=</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
